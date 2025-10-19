@@ -1,0 +1,6 @@
+id_rsa
+.bashrc
+backups
+.env
+# Ignore local environment
+.env
