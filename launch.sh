@@ -97,8 +97,10 @@ choose_and_launch() {
         compose_args+=(--profile "$p")
     done
 
-    echo "Lancement: docker compose ${compose_args[*]} up -d"
+    section "Lancement: docker compose"
+    echo
     docker compose "${compose_args[@]}" up -d
+    echo
 }
 
 # Run preflight, then runtime preflight, then ports check, then prompt profiles and start
