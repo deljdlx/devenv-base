@@ -1,3 +1,7 @@
+```sh
+git@github.com:STIMDATA/devenv-base.git
+```
+
 ## Launching the Development Environment
 ```sh
 ./launch.sh
