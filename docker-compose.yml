@@ -101,33 +101,6 @@ services:
       # - traefik.http.routers.mailhog.tls=true
       - traefik.http.services.mailhog.loadbalancer.server.port=8025
 
-  netdata:
-    profiles: ["monitoring"]
-    image: netdata/netdata:latest
-    # container_name: netdata
-    cap_add:
-      - SYS_PTRACE
-      - NET_ADMIN
-    ports:
-      - "${NETDATA_PORT:-19999}:19999"
-    volumes:
-      - netdata_data:/var/lib/netdata
-      - /etc/passwd:/host/etc/passwd:ro
-      - /etc/group:/host/etc/group:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /etc/os-release:/host/etc/os-release:ro
-    restart: unless-stopped
-    networks:
-      - app-net
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=app-net
-      - traefik.http.routers.netdata.rule=Host(`netdata.${DOMAIN:-localhost}`)
-      - traefik.http.routers.netdata.entrypoints=web
-      # - traefik.http.routers.netdata.tls=true
-      - traefik.http.services.netdata.loadbalancer.server.port=19999
-
   db:
     image: mariadb:11
     # container_name: db
@@ -284,6 +257,33 @@ services:
       - traefik.http.routers.portainer.entrypoints=web
       # - traefik.http.routers.portainer.tls=true
       - traefik.http.services.portainer.loadbalancer.server.port=9000
+
+  netdata:
+    profiles: ["monitoring"]
+    image: netdata/netdata:latest
+    # container_name: netdata
+    cap_add:
+      - SYS_PTRACE
+      - NET_ADMIN
+    ports:
+      - "${NETDATA_PORT:-19999}:19999"
+    volumes:
+      - netdata_data:/var/lib/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+    restart: unless-stopped
+    networks:
+      - app-net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=app-net
+      - traefik.http.routers.netdata.rule=Host(`netdata.${DOMAIN:-localhost}`)
+      - traefik.http.routers.netdata.entrypoints=web
+      # - traefik.http.routers.netdata.tls=true
+      - traefik.http.services.netdata.loadbalancer.server.port=19999
 
   docker-socket-proxy:
     image: tecnativa/docker-socket-proxy:latest
