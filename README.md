@@ -22,7 +22,7 @@ Portainer is a lightweight management UI that allows you to easily manage your D
 Netdata is a real-time performance monitoring tool that provides insights into the health and performance of your systems and applications.
 
 
-## CLone repository
+## Clone repository
 
 ```sh
 git clone git@github.com:STIMDATA/devenv-base.git
@@ -39,3 +39,5 @@ cd devenv-base
 - http://mailhog.localhost
 - http://kibana.localhost
 - http://adminer.localhost
+- http://portainer.localhost
+- http://netdata.localhost
