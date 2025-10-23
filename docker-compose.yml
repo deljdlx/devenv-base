@@ -125,14 +125,20 @@ services:
       timeout: 3s
       retries: 20
       start_period: 10s
-  
-  
+
+
   adminer:
     image: adminer:latest
     restart: unless-stopped
     # profiles: ["dbadmin"]
-    ports:
-      - "${ADMINER_PORT:-8070}:8070"
+    # ports:
+      # - "${ADMINER_PORT:-8070}:8070"
+    environment:
+      ADMINER_DEFAULT_DB_DRIVER: ${ADMINER_DEFAULT_DB_DRIVER:-mysql}
+      ADMINER_DEFAULT_SERVER: ${ADMINER_DEFAULT_SERVER:-db}
+      ADMINER_DEFAULT_USERNAME: ${ADMINER_DEFAULT_USERNAME:-root}
+      ADMINER_DEFAULT_PASSWORD: ${ADMINER_DEFAULT_PASSWORD:-rootpass}
+      ADMINER_DESIGN: ${ADMINER_DESIGN:-nette}
     networks:
       - app-net
     labels:
@@ -140,7 +146,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.adminer.rule=Host(`adminer.${DOMAIN:-localhost}`)
       - traefik.http.routers.adminer.entrypoints=web
-      - traefik.http.services.adminer.loadbalancer.server.port=${ADMINER_PORT:-8070}
+      - traefik.http.services.adminer.loadbalancer.server.port=${ADMINER_PORT:-8080}
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.26
