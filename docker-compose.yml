@@ -27,8 +27,10 @@ services:
       - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN:-localhost}`)
       - traefik.http.routers.traefik.entrypoints=web
       - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.priority=10000
       # - traefik.http.routers.traefik.tls=true
       # - traefik.http.routers.traefik.tls.certresolver=dev
+
     networks:
       app-net:
         aliases :
@@ -57,6 +59,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.selenium.rule=Host(`selenium.${DOMAIN:-localhost}`)
       - traefik.http.routers.selenium.entrypoints=web
+      - traefik.http.routers.selenium.priority=10000
       - traefik.http.services.selenium.loadbalancer.server.port=7900
 
   filebeat:
@@ -98,6 +101,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.mailhog.rule=Host(`mailhog.${DOMAIN:-localhost}`)
       - traefik.http.routers.mailhog.entrypoints=web
+      - traefik.http.routers.mailhog.priority=10000
       # - traefik.http.routers.mailhog.tls=true
       - traefik.http.services.mailhog.loadbalancer.server.port=8025
 
@@ -146,6 +150,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.adminer.rule=Host(`adminer.${DOMAIN:-localhost}`)
       - traefik.http.routers.adminer.entrypoints=web
+      - traefik.http.routers.adminer.priority=10000
       - traefik.http.services.adminer.loadbalancer.server.port=${ADMINER_PORT:-8080}
 
   elasticsearch:
@@ -173,6 +178,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.elasticsearch.rule=Host(`es.${DOMAIN:-localhost}`)
       - traefik.http.routers.elasticsearch.entrypoints=web
+      - traefik.http.routers.elasticsearch.priority=10000
       # - traefik.http.routers.elasticsearch.tls=true
       - traefik.http.services.elasticsearch.loadbalancer.server.port=9200
     healthcheck:
@@ -201,6 +207,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.kibana.rule=Host(`kibana.${DOMAIN:-localhost}`)
       - traefik.http.routers.kibana.entrypoints=web
+      - traefik.http.routers.kibana.priority=10000
       # - traefik.http.routers.kibana.tls=true
       - traefik.http.services.kibana.loadbalancer.server.port=5601
     healthcheck:
@@ -228,6 +235,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.apm.rule=Host(`apm.${DOMAIN:-localhost}`)
       - traefik.http.routers.apm.entrypoints=web
+      - traefik.http.routers.apm.priority=10000
       # - traefik.http.routers.apm.tls=true
       - traefik.http.services.apm.loadbalancer.server.port=8200
     healthcheck:
@@ -261,6 +269,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN:-localhost}`)
       - traefik.http.routers.portainer.entrypoints=web
+      - traefik.http.routers.portainer.priority=10000
       # - traefik.http.routers.portainer.tls=true
       - traefik.http.services.portainer.loadbalancer.server.port=9000
 
@@ -288,6 +297,7 @@ services:
       - traefik.docker.network=app-net
       - traefik.http.routers.netdata.rule=Host(`netdata.${DOMAIN:-localhost}`)
       - traefik.http.routers.netdata.entrypoints=web
+      - traefik.http.routers.netdata.priority=10000
       # - traefik.http.routers.netdata.tls=true
       - traefik.http.services.netdata.loadbalancer.server.port=19999
 
