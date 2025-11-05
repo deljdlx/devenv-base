@@ -17,7 +17,8 @@ services:
       # - --certificatesresolvers.dev.acme.email=you@example.com
       # - --certificatesresolvers.dev.acme.storage=/letsencrypt/acme.json
     ports:
-      - "${TRAEFIK_HTTP_PORT:-80}:80"
+      # - "${TRAEFIK_HTTP_PORT:-80}:80"
+       - "127.0.0.1:${TRAEFIK_HTTP_PORT:-80}:80"  # ✅ Port bindé uniquement sur localhost
       # - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -37,7 +38,6 @@ services:
           - web.test
           - monitor.test
           - myurgo.test
-
   selenium:
     image: selenium/standalone-chrome:latest
     # container_name: selenium
@@ -272,6 +272,12 @@ services:
       - traefik.http.routers.grafana.priority=10000
       # - traefik.http.routers.grafana.tls=true
       - traefik.http.services.grafana.loadbalancer.server.port=3000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:3000/api/health | grep -q '\"database\":\"ok\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
 
   portainer:
     profiles: ["monitoring"]
@@ -358,6 +364,7 @@ volumes:
   portainer_data:
   netdata_data:
   filebeat_data:
+  grafana_data:
 
 networks:
   app-net:
