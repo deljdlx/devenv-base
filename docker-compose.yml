@@ -249,6 +249,30 @@ services:
       - apm-server.kibana.enabled=true
       - apm-server.kibana.host=http://${APM_KIBANA_HOST:-kibana}:${APM_KIBANA_PORT:-5601}
 
+  # install grafana
+  grafana:
+    image: grafana/grafana:latest
+    # container_name: grafana
+    restart: unless-stopped
+    profiles: ["observability"]
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USERNAME:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-aaaaaaaaaaaa}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - app-net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=app-net
+      - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN:-localhost}`)
+      - traefik.http.routers.grafana.entrypoints=web
+      - traefik.http.routers.grafana.priority=10000
+      # - traefik.http.routers.grafana.tls=true
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+
   portainer:
     profiles: ["monitoring"]
     image: portainer/portainer-ce:latest
