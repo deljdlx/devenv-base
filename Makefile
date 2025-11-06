@@ -17,6 +17,9 @@ NETWORK ?= app-net
 # 🔥 Destruction & Reset
 # ------------------------------------------------
 
+start: ## Start all containers
+	@bash ./launch.sh
+
 destroy: ## Destroy all containers, networks, and volumes from $(PROJECT_NAME)
 	@echo "⚠️  Destroying all containers, networks, and volumes for $(PROJECT_NAME)..."
 	@docker compose -f $(APP_FILE) down -v --remove-orphans || true
