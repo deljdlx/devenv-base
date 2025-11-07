@@ -13,6 +13,11 @@ APP_FILE ?= docker-compose.yml
 # Default network shared by app + tools
 NETWORK ?= app-net
 
+
+start:
+	@bash ./launch.sh
+
+
 # ------------------------------------------------
 # 🔥 Destruction & Reset
 # ------------------------------------------------
