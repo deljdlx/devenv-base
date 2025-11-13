@@ -22,22 +22,33 @@ Portainer is a lightweight management UI that allows you to easily manage your D
 Netdata is a real-time performance monitoring tool that provides insights into the health and performance of your systems and applications.
 
 
-## Clone repository
+## Chrome Headless
 
+### Generating PDF from a URL using Chrome Headless
 ```sh
-git clone git@github.com:STIMDATA/devenv-base.git
-```
+  curl -X POST "http://localhost:3001/pdf?token=super-secret-token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com",
+    "options": {
+      "printBackground": true,
+      "format": "A4"
+    }
+  }' \
+  --output output.pdf
+  ```
 
-## Launching the Development Environment
-```sh
-cd devenv-base
-./launch.sh
-```
+  ### generating a screenshot from a URL using Chrome Headless
+  ```sh
+curl -X POST "http://localhost:3001/screenshot?token=super-secret-token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com",
+    "options": {
+      "fullPage": true,
+      "type": "png"
+    }
+  }' \
+  --output screenshot.png
 
-## URL
-- http://traefik.localhost
-- http://mailhog.localhost
-- http://kibana.localhost
-- http://adminer.localhost
-- http://portainer.localhost
-- http://netdata.localhost
+```

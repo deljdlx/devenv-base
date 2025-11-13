@@ -39,6 +39,7 @@ summarize_selected_profiles() {
     printf "%s\n" $services | awk '!seen[$0]++' | xargs 2>/dev/null || true
 }
 
+
 # Prompt the user with presets for typical scenarios and return selected profiles
 choose_profiles_with_presets() {
     local DEFAULT_PROFILES="proxy dev"

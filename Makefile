@@ -13,6 +13,14 @@ APP_FILE ?= docker-compose.yml
 # Default network shared by app + tools
 NETWORK ?= app-net
 
+.PHONY: help start destroy destroy-hard rebuild ps logs network clean
+
+help: ## Show this help
+	@awk 'BEGIN {FS = ":.*##"}; /^[a-zA-Z0-9_-]+:.*##/ {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
+
+profile: ## launch docker compose with profile passed as argument (e.g. make profile PROFILE=messaging)
+	docker compose --profile $(PROFILE) up -d
+
 
 start:
 	@bash ./launch.sh

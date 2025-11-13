@@ -4,7 +4,7 @@ services:
     image: traefik:v3.1
     # container_name: traefik
     restart: unless-stopped
-    profiles: ["proxy"]
+    # profiles: ["proxy"]
     command:
       - --api.dashboard=true
       - --api.insecure=true
@@ -38,29 +38,6 @@ services:
           - web.test
           - monitor.test
           - myurgo.test
-  selenium:
-    image: selenium/standalone-chrome:latest
-    # container_name: selenium
-    shm_size: 2g
-    restart: unless-stopped
-    profiles: ["testing"]
-    ports:
-      - "${SELENIUM_WEBDRIVER_PORT:-4444}:4444"   # WebDriver endpoint
-      - "${SELENIUM_UI_PORT:-7900}:7900"   # noVNC UI
-    environment:
-      - TZ=${TZ:-Europe/Paris}
-      - SE_NODE_MAX_SESSIONS=${SE_NODE_MAX_SESSIONS:-1}
-      - SE_NODE_OVERRIDE_MAX_SESSIONS=${SE_NODE_OVERRIDE_MAX_SESSIONS:-true}
-      # - SE_OPTS=--log-level FINE  # Uncomment for verbose logs
-    networks:
-      - app-net
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=app-net
-      - traefik.http.routers.selenium.rule=Host(`selenium.${DOMAIN:-localhost}`)
-      - traefik.http.routers.selenium.entrypoints=web
-      - traefik.http.routers.selenium.priority=10000
-      - traefik.http.services.selenium.loadbalancer.server.port=7900
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.17.26
@@ -152,6 +129,80 @@ services:
       - traefik.http.routers.adminer.entrypoints=web
       - traefik.http.routers.adminer.priority=10000
       - traefik.http.services.adminer.loadbalancer.server.port=${ADMINER_PORT:-8080}
+
+
+
+  # browserless/chrome for headless Chrome
+  chromeheadless:
+    image: browserless/chrome:latest
+    # container_name: chromeheadless
+    shm_size: 2g
+    restart: unless-stopped
+    profiles: ["pdf"]
+    ports:
+      - "${CHROMEHEADLESS_PORT:-3001}:3000"
+    environment:
+      - TOKEN=${CHROMEHEADLESS_TOKEN:-super-secret-token}
+      - MAX_CONCURRENT_SESSIONS=${CHROMEHEADLESS_MAX_CONCURRENT_SESSIONS:-1}
+      - DEFAULT_BLOCK_ADS=${CHROMEHEADLESS_DEFAULT_BLOCK_ADS:-true}
+      - PREBOOT_CHROME=${CHROMEHEADLESS_PREBOOT_CHROME:-true}
+      - KEEP_ALIVE=${CHROMEHEADLESS_KEEP_ALIVE:-true}
+      - TZ=${TZ:-Europe/Paris}
+    networks:
+      - app-net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=app-net
+      - traefik.http.routers.chromeheadless.rule=Host(`chromeheadless.${DOMAIN:-localhost}`)
+      - traefik.http.routers.chromeheadless.entrypoints=web
+      - traefik.http.routers.chromeheadless.priority=10000
+      - traefik.http.services.chromeheadless.loadbalancer.server.port=3000
+
+
+
+
+
+
+
+  redis:
+    image: redis:7-alpine
+    # container_name: redis
+    restart: unless-stopped
+    profiles: ["caching"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    # container_name: rabbitmq
+    restart: unless-stopped
+    profiles: ["messaging"]
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"         # AMQP
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
+    networks:
+      - app-net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=app-net
+      - traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.${DOMAIN:-localhost}`)
+      - traefik.http.routers.rabbitmq.entrypoints=web
+      - traefik.http.routers.rabbitmq.priority=10000
+      # - traefik.http.routers.rabbitmq.tls=true
+      - traefik.http.services.rabbitmq.loadbalancer.server.port=15672
+
+
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.26
@@ -356,6 +407,33 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - app-net
+
+
+  selenium:
+    image: selenium/standalone-chrome:latest
+    # container_name: selenium
+    shm_size: 2g
+    restart: unless-stopped
+    profiles: ["testing"]
+    ports:
+      - "${SELENIUM_WEBDRIVER_PORT:-4444}:4444"   # WebDriver endpoint
+      - "${SELENIUM_UI_PORT:-7900}:7900"   # noVNC UI
+    environment:
+      - TZ=${TZ:-Europe/Paris}
+      - SE_NODE_MAX_SESSIONS=${SE_NODE_MAX_SESSIONS:-1}
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=${SE_NODE_OVERRIDE_MAX_SESSIONS:-true}
+      # - SE_OPTS=--log-level FINE  # Uncomment for verbose logs
+    networks:
+      - app-net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=app-net
+      - traefik.http.routers.selenium.rule=Host(`selenium.${DOMAIN:-localhost}`)
+      - traefik.http.routers.selenium.entrypoints=web
+      - traefik.http.routers.selenium.priority=10000
+      - traefik.http.services.selenium.loadbalancer.server.port=7900
+
+
 
 volumes:
   app_logs:
