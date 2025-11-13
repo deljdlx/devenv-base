@@ -134,20 +134,20 @@ services:
 
   # browserless/chrome for headless Chrome
   chromeheadless:
-    image: browserless/chrome:latest
+    image: ghcr.io/browserless/chromium
     # container_name: chromeheadless
-    shm_size: 2g
     restart: unless-stopped
-    profiles: ["pdf"]
+    profiles: ["testing"]
     ports:
       - "${CHROMEHEADLESS_PORT:-3001}:3000"
     environment:
+      - PREBOOT_CHROME=true
+      - MAX_CONCURRENT_SESSIONS=5
+      - DEFAULT_BLOCK_ADS=true
+      - DISABLE_GPU=true
+      - ENABLE_DEBUGGER=true
+      - CHROME_FLAGS=--no-sandbox,--disable-setuid-sandbox
       - TOKEN=${CHROMEHEADLESS_TOKEN:-super-secret-token}
-      - MAX_CONCURRENT_SESSIONS=${CHROMEHEADLESS_MAX_CONCURRENT_SESSIONS:-1}
-      - DEFAULT_BLOCK_ADS=${CHROMEHEADLESS_DEFAULT_BLOCK_ADS:-true}
-      - PREBOOT_CHROME=${CHROMEHEADLESS_PREBOOT_CHROME:-true}
-      - KEEP_ALIVE=${CHROMEHEADLESS_KEEP_ALIVE:-true}
-      - TZ=${TZ:-Europe/Paris}
     networks:
       - app-net
     labels:
@@ -157,9 +157,6 @@ services:
       - traefik.http.routers.chromeheadless.entrypoints=web
       - traefik.http.routers.chromeheadless.priority=10000
       - traefik.http.services.chromeheadless.loadbalancer.server.port=3000
-
-
-
 
 
 
@@ -409,6 +406,7 @@ services:
       - app-net
 
 
+  # default mdp: secret
   selenium:
     image: selenium/standalone-chrome:latest
     # container_name: selenium

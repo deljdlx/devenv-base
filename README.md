@@ -26,7 +26,7 @@ Netdata is a real-time performance monitoring tool that provides insights into t
 
 ### Generating PDF from a URL using Chrome Headless
 ```sh
-  curl -X POST "http://localhost:3001/pdf?token=super-secret-token" \
+  curl -X POST "http://localhost:3001/chromium/pdf?token=super-secret-token" \
   -H "Content-Type: application/json" \
   -d '{
     "url": "https://example.com",
@@ -38,17 +38,24 @@ Netdata is a real-time performance monitoring tool that provides insights into t
   --output output.pdf
   ```
 
-  ### generating a screenshot from a URL using Chrome Headless
-  ```sh
+### generating a screenshot from a URL using Chrome Headless
+```sh
 curl -X POST "http://localhost:3001/screenshot?token=super-secret-token" \
-  -H "Content-Type: application/json" \
-  -d '{
+-H "Content-Type: application/json" \
+-d '{
     "url": "https://example.com",
     "options": {
       "fullPage": true,
       "type": "png"
     }
-  }' \
-  --output screenshot.png
+}' \
+--output screenshot.png
+```
 
+### Running a script
+```sh
+curl -X POST "http://localhost:3001/function?token=super-secret-token" \
+-H "Content-Type: application/javascript" \
+--data-binary @assets/browserless-examples/demo-react-api.js \
+--output out.pdf
 ```

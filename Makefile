@@ -18,20 +18,34 @@ NETWORK ?= app-net
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*##"}; /^[a-zA-Z0-9_-]+:.*##/ {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
-profile: ## launch docker compose with profile passed as argument (e.g. make profile PROFILE=messaging)
+startProfile: ## launch docker compose with profile passed as argument (e.g. make profile PROFILE=messaging)
 	docker compose --profile $(PROFILE) up -d
 
 
-start:
+chromeHeadless: ## launch chrome headless container
+	docker compose up chromeheadless -d
+chromeHeadlessStop: ## stop chrome headless container
+	docker compose stop chromeheadless
+
+selenium: ## launch selenium container
+	docker compose up selenium -d
+seleniumStop: ## stop selenium container
+	docker compose stop selenium
+
+
+traefik: ## launch traefik container
+	docker compose up traefik -d
+traefikStop: ## stop traefik container
+	docker compose stop traefik
+
+
+start: ## Interactive launch script
 	@bash ./launch.sh
 
 
 # ------------------------------------------------
 # 🔥 Destruction & Reset
 # ------------------------------------------------
-
-start: ## Start all containers
-	@bash ./launch.sh
 
 destroy: ## Destroy all containers, networks, and volumes from $(PROJECT_NAME)
 	@echo "⚠️  Destroying all containers, networks, and volumes for $(PROJECT_NAME)..."
